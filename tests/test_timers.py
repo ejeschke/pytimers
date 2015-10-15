@@ -97,6 +97,26 @@ def test_timer_comparison_coverage ():
     time.sleep(.2)
 
 
+def test_timer_time_remaining():
+    timer = Timer(timer_heap, 0, lambda: None)
+    assert timer == timer
+
+    timer.start(.1)
+    time.sleep(0.05)
+    remain = timer.remaining_time()
+    assert 0.047 < remain < 0.052
+
+
+def test_timer_time_elapsed():
+    timer = Timer(timer_heap, 0, lambda: None)
+    assert timer == timer
+
+    timer.start(.1)
+    time.sleep(0.05)
+    elapsed = timer.elapsed_time()
+    assert 0.047 < elapsed < 0.052
+
+
 def test_many_timers ():
     """Test more timers than standard thread based timer could handle"""
     test_dict = {}
