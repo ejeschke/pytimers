@@ -59,10 +59,14 @@ class Timer (object):
         return id(self) == id(other)
 
     def is_scheduled (self):
+        """Return True if the timer is scheduled, False otherwise."""
         with self.timer_heap:
             return self.expire is not None
 
     def start (self, time_sec):
+        """Start the timer with expiration after `time_sec`.  If this timer
+        is already running, stop it first.
+        """
         self.stop()
 
         self.start_time = time.time()
@@ -74,7 +78,15 @@ class Timer (object):
 
         self.timer_heap.add(self)
 
-    def elapsed_time (self):
+    def cond_start (self, time_sec):
+        """Only start the timer (with the new time) if it is *not* already
+        scheduled.
+        """
+        with self.timer_heap:
+            if not self.is_scheduled():
+                self.start(time_sec)
+
+    def elapsed_time(self):
         """Return the elapsed time since the timer was started."""
         return time.time() - self.start_time
 
@@ -87,6 +99,7 @@ class Timer (object):
         return self.expire - time.time()
 
     def stop (self):
+        """Stop the timer."""
         had_run = self.timer_heap.remove(self)
         self.expire = None
         return had_run
